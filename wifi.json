@@ -1,0 +1,16 @@
+{
+"aironet":[
+    {
+        "host_ip": "10.31.10.3",
+        "hostname": "31johnmarkaironet",
+        "username": "admin",
+        "password": "pass",
+        "ssid": "31-Rivancyber",
+        "authentication": "open",
+        "key-man": "wpa",
+        "wifi-pass": "C1sc0123",
+        "channel": "6",
+        "enc-mod": "tkip"
+    }
+]
+}

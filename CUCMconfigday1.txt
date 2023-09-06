@@ -1,0 +1,186 @@
+config t
+   hostname CUCM-31
+   enable secret pass
+   service password-encryption
+   no logging console
+   no ip domain-lookup
+   line console 0
+     password pass
+     login
+     exec-timeout 0 0
+    line vty 0 14
+      password pass
+      login
+      exec-timeout 0 0
+   Int Fa 0/0
+     no shutdown
+	 ip add 10.31.100.8 255.255.255.0 
+	 end
+	 
+configure terminal
+dial-peer voice 1 pots
+   destination-pattern 3100
+   port 0/0/0
+dial-peer voice 2 pots
+   destination-pattern 3101
+   port 0/0/1
+dial-peer voice 3 pots
+   destination-pattern 3102
+   port 0/0/2
+dial-peer voice 4 pots
+   destination-pattern 3103
+   port 0/0/3
+end
+
+config t
+no telephony-service
+telephony-service
+   no auto assign
+   no auto-reg-ephone
+   max-ephones 5
+   max-dn 20
+   ip source-address 10.31.100.8 port 2000
+   create cnf-files
+ephone-dn 1
+  number 3111
+ephone-dn 2
+  number 3122
+ephone-dn 3
+  number 3133
+ephone-dn 4
+  number 3144
+ephone-dn 5
+  number 3155
+ephone-dn 6
+  number 3166
+ephone-dn 7
+  number 3177
+ephone-dn 8
+  number 3188	
+Ephone 1
+  Mac-address ccd8.c1fa.dd39
+  type 8945
+  button 1:1 2:3 3:2 4:4
+  restart
+Ephone 2
+  Mac-address ccd8.c1fb.14c9
+  type 8945
+  button 1:5 2:6 3:7 4:8
+  restart  
+end
+
+configure terminal
+ephone 1
+   video
+   voice service voip
+   h323
+   call start slow
+ephone 2
+   video
+   voice service voip
+   h323
+   call start slow
+end
+
+configure terminal
+voice service voip
+ip address trusted list
+ipv4 0.0.0.0 0.0.0.0
+exit
+
+configure terminal
+dial-peer voice 11 Voip
+destination-pattern 11..
+session target ipv4:10.11.100.8
+codec g711ULAW
+dial-peer voice 12 Voip
+ destination-pattern 12..
+ session target ipv4:10.12.100.8
+ codec g711ULAW
+dial-peer voice 21 Voip
+ destination-pattern 21..
+ session target ipv4:10.21.100.8
+ codec g711ULAW
+dial-peer voice 22 Voip
+ destination-pattern 22..
+ session target ipv4:10.22.100.8
+ codec g711ULAW
+!dial-peer voice 31 Voip
+! destination-pattern 31..
+! session target ipv4:10.31.100.8
+! codec g711ULAW
+dial-peer voice 32 Voip
+ destination-pattern 32..
+ session target ipv4:10.32.100.8
+ codec g711ULAW
+dial-peer voice 41 Voip
+ destination-pattern 41..
+ session target ipv4:10.41.100.8
+ codec g711ULAW
+dial-peer voice 42 Voip
+ destination-pattern 42..
+ session target ipv4:10.42.100.8
+ codec g711ULAW
+dial-peer voice 51 Voip
+ destination-pattern 51..
+ session target ipv4:10.51.100.8
+ codec g711ULAW
+dial-peer voice 52 Voip
+ destination-pattern 52..
+ session target ipv4:10.52.100.8
+ codec g711ULAW
+dial-peer voice 61 Voip
+ destination-pattern 61..
+ session target ipv4:10.61.100.8
+ codec g711ULAW
+dial-peer voice 62 Voip
+ destination-pattern 62..
+ session target ipv4:10.62.100.8
+ codec g711ULAW
+dial-peer voice 71 Voip
+ destination-pattern 71..
+ session target ipv4:10.71.100.8
+ codec g711ULAW
+ 
+config t
+dial-peer voice 69 voip
+ service rivanaa out-bound
+ destination-pattern 3169
+ session target ipv4:10.31.100.8
+ incoming called-number 3169
+ dtmf-relay h245-alphanumeric
+ codec g711ulaw
+ no vad
+!
+telephony-service
+ moh "flash:/en_bacd_music_on_hold.au"
+!
+application
+ service rivanaa flash:app-b-acd-aa-3.0.0.2.tcl
+  paramspace english index 1        
+  param number-of-hunt-grps 2
+  param dial-by-extension-option 8
+  param handoff-string rivanaa
+  param welcome-prompt flash:en_bacd_welcome.au
+  paramspace english language en
+  param call-retry-timer 15
+  param service-name rivanqueue
+  paramspace english location flash:
+  param second-greeting-time 60
+  param max-time-vm-retry 2
+  param voice-mail 1234
+  param max-time-call-retry 700
+  param aa-pilot 3169
+ service rivanqueue flash:app-b-acd-3.0.0.2.tcl
+  param queue-len 15
+  param aa-hunt1 3100
+  param aa-hunt2 3177
+  param aa-hunt3 3101
+  param aa-hunt4 3155
+  param queue-manager-debugs 1
+  param number-of-hunt-grps 4
+*************************************************
+
+config t
+ip routing
+ip route 0.0.0.0 0.0.0.0 10.31.100.4
